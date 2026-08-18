@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 300px;
+      margin: 0;
+      padding: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #ffffff;
+      color: #0f172a;
+    }
+    h2 { font-size: 14px; margin: 0 0 8px 0; font-weight: 700; }
+    p { font-size: 12px; color: #64748b; margin: 0 0 10px 0; line-height: 1.4; }
+    .status-pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-bottom: 10px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .status-pill.warn { background: #fffbeb; color: #92400e; }
+    .meta { font-weight: 500; color: #334155; }
+    button {
+      width: 100%;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .hint { font-size: 11px; color: #94a3b8; margin: 10px 0 0 0; }
+  </style>
+</head>
+<body>
+  <h2>Greenhouse Job Overlay</h2>
+  <p>Status and panel toggle only. The job description opens as a left floating panel on the page — not in this popup, and not in Chrome's sidebar.</p>
+  <div class="status-pill" id="statusPill">Checking this tab…</div>
+  <button id="toggleBtn" disabled>Toggle panel</button>
+  <p class="hint">Shortcut: Ctrl+Shift+G (Cmd+Shift+G on Mac)</p>
+  <script src="popup.js"></script>
+</body>
+</html>

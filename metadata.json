@@ -1,0 +1,6 @@
+{
+  "name": "Greenhouse Job & Link Extractor",
+  "description": "Automated Greenhouse API inspector, Wayback archive retriever, embedded link extractor, script generator, and non-sidebar browser extension.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

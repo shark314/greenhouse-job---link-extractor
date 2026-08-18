@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Greenhouse Job Overlay",
+  "version": "2.1.0",
+  "description": "Auto-reads the current Greenhouse job URL, fetches the description, extracts embedded links, and shows them in a left floating panel.",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": [
+    "https://*.greenhouse.io/*",
+    "https://job-boards.greenhouse.io/*",
+    "https://boards.greenhouse.io/*",
+    "https://boards-api.greenhouse.io/*",
+    "https://web.archive.org/*",
+    "https://archive.org/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Greenhouse Job Overlay",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.greenhouse.io/*",
+        "*://job-boards.greenhouse.io/*",
+        "*://boards.greenhouse.io/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "toggle-inspector": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+G",
+        "mac": "Command+Shift+G"
+      },
+      "description": "Toggle Greenhouse floating panel"
+    }
+  }
+}

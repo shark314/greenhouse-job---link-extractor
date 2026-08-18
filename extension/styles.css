@@ -1,0 +1,354 @@
+/* Left floating panel + bottom-right status pill. Not a sidebar, no page backdrop. */
+#gh-auto-extractor-root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
+  pointer-events: none;
+}
+
+#gh-auto-extractor-root * {
+  box-sizing: border-box;
+}
+
+#gh-pill-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483640;
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.gh-pill-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gh-pill-body:hover {
+  transform: translateY(-2px);
+  border-color: #2563eb;
+  box-shadow: 0 14px 30px -5px rgba(37, 99, 235, 0.2);
+}
+
+.gh-pill-icon {
+  color: #2563eb;
+  font-size: 14px;
+}
+
+.gh-pill-count {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  font-weight: 700;
+}
+
+/* Partial-width left card — page stays clickable, no dimming overlay */
+#gh-hud-overlay {
+  position: fixed;
+  left: 16px;
+  top: 12vh;
+  width: 42vw;
+  min-width: 360px;
+  max-width: 560px;
+  height: min(80vh, 720px);
+  z-index: 2147483646;
+  display: none;
+  pointer-events: auto;
+}
+
+#gh-hud-overlay.is-open {
+  display: block;
+}
+
+.gh-hud-card {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: ghFadeIn 0.15s ease-out;
+}
+
+@keyframes ghFadeIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.gh-hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.gh-hud-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.gh-hud-icon-box {
+  width: 32px;
+  height: 32px;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.gh-hud-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.gh-hud-subtitle {
+  margin: 0;
+  font-size: 11px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.gh-hud-btn-copy {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
+
+.gh-hud-btn-copy:hover { background: #f1f5f9; }
+
+.gh-hud-btn-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.gh-hud-btn-close:hover { color: #0f172a; background: #e2e8f0; }
+
+.gh-hud-content {
+  padding: 16px 18px;
+  overflow-y: auto;
+  font-size: 13px;
+  color: #334155;
+  flex: 1;
+}
+
+.gh-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.gh-banner.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.gh-banner.warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.gh-banner.danger { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+.gh-status-badge {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.gh-status-badge.success { background: #dcfce7; color: #15803d; }
+.gh-status-badge.warning { background: #fef3c7; color: #b45309; }
+.gh-status-badge.danger { background: #fee2e2; color: #b91c1c; }
+
+.gh-banner-text { min-width: 0; }
+
+.gh-job-header { margin-bottom: 14px; }
+.gh-job-title { font-size: 17px; font-weight: 700; margin: 0 0 4px 0; color: #0f172a; }
+.gh-job-meta { font-size: 12px; color: #64748b; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.gh-archive-link { color: #2563eb; text-decoration: none; font-weight: 600; }
+.gh-archive-link:hover { text-decoration: underline; }
+
+.gh-section { margin-top: 16px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+.gh-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.gh-section-header h4 { margin: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #475569; }
+.gh-badge-sub { font-size: 11px; color: #94a3b8; }
+
+.gh-links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.gh-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.gh-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.gh-tag.apply { background: #eff6ff; color: #1d4ed8; }
+.gh-tag.email { background: #fdf2f8; color: #be185d; }
+.gh-tag.form { background: #f5f3ff; color: #6d28d9; }
+.gh-tag.meeting { background: #ecfdf5; color: #047857; }
+.gh-tag.document { background: #fff7ed; color: #c2410c; }
+.gh-tag.social { background: #eef2ff; color: #4338ca; }
+.gh-tag.external { background: #f1f5f9; color: #475569; }
+
+.gh-link-text {
+  flex: 1;
+  color: #2563eb;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.gh-link-text:hover { text-decoration: underline; }
+
+.gh-btn-mini {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.gh-btn-mini:hover { background: #e2e8f0; }
+
+.gh-desc-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #334155;
+}
+
+.gh-desc-box p { margin: 0 0 10px 0; }
+.gh-desc-box ul, .gh-desc-box ol { margin: 0 0 10px 16px; padding: 0; }
+
+.gh-action-btn {
+  display: inline-block;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.gh-action-btn:hover { background: #1d4ed8; }
+
+.gh-empty { color: #94a3b8; font-size: 12px; margin: 6px 0; text-align: center; }
+
+.gh-loader-box {
+  padding: 30px;
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.gh-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: ghSpin 0.7s linear infinite;
+  margin: 0 auto 10px auto;
+}
+
+@keyframes ghSpin { to { transform: rotate(360deg); } }
+
+.gh-live-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.gh-live-job {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.gh-live-job:hover { border-color: #2563eb; }
+.gh-live-job strong { display: block; font-size: 12px; }
+.gh-live-job span { font-size: 11px; color: #64748b; }
