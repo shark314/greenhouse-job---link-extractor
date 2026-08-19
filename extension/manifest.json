@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Greenhouse Job Overlay",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Auto-reads the current Greenhouse job URL, fetches the description, extracts embedded links, and shows them in a left floating panel.",
   "permissions": ["activeTab", "storage"],
   "host_permissions": [
@@ -39,6 +39,12 @@
       "js": ["content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["*://*.greenhouse.io/*"]
     }
   ],
   "commands": {

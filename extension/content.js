@@ -61,7 +61,6 @@
   function detectJobContext() {
     const fromUrl = parseGreenhouseUrl(window.location.href);
     const fromRef = parseGreenhouseUrl(document.referrer);
-
     return {
       board: fromUrl.board || fromRef.board || null,
       jobId: fromUrl.jobId || fromRef.jobId || null,
@@ -198,21 +197,46 @@
       </div>
     </div>
   `;
-  (document.body || document.documentElement).appendChild(uiContainer);
 
-  const pill = document.getElementById("gh-pill-trigger");
-  const overlay = document.getElementById("gh-hud-overlay");
-  const closeBtn = document.getElementById("gh-close-hud");
-  const pillStatus = document.getElementById("gh-pill-status");
-  const pillBadge = document.getElementById("gh-pill-badge");
-  const boardTag = document.getElementById("gh-hud-board-tag");
-  const mainContent = document.getElementById("gh-hud-main-content");
-  const copyAllBtn = document.getElementById("gh-copy-all-btn");
+  const host = document.createElement("div");
+  host.id = "gh-auto-extractor-host";
+  host.setAttribute("data-gh-overlay", "1");
+  host.style.cssText =
+    "all:initial;position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;pointer-events:none;";
+  const shadow = host.attachShadow({ mode: "open" });
+  const styleLink = document.createElement("link");
+  styleLink.rel = "stylesheet";
+  styleLink.href = chrome.runtime.getURL("styles.css");
+  shadow.appendChild(styleLink);
+  shadow.appendChild(uiContainer);
+
+  function mountHost() {
+    if (!document.documentElement.contains(host)) {
+      document.documentElement.appendChild(host);
+      return true;
+    }
+    return false;
+  }
+  mountHost();
+
+  new MutationObserver(() => {
+    mountHost();
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  const pill = shadow.getElementById("gh-pill-trigger");
+  const overlay = shadow.getElementById("gh-hud-overlay");
+  const closeBtn = shadow.getElementById("gh-close-hud");
+  const pillStatus = shadow.getElementById("gh-pill-status");
+  const pillBadge = shadow.getElementById("gh-pill-badge");
+  const boardTag = shadow.getElementById("gh-hud-board-tag");
+  const mainContent = shadow.getElementById("gh-hud-main-content");
+  const copyAllBtn = shadow.getElementById("gh-copy-all-btn");
 
   function showPanel() {
     overlay.classList.add("is-open");
     overlay.style.display = "block";
     panelOpen = true;
+    mountHost();
   }
 
   function hidePanel() {
