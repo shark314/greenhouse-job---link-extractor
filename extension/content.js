@@ -1,4 +1,4 @@
-// content.js — auto-detect Greenhouse board/job, fetch description, show left floating panel
+// content.js — auto-detect Greenhouse board/job, fetch description, show right floating panel
 (function () {
   if (window.__gh_extractor_initialized) return;
   window.__gh_extractor_initialized = true;
@@ -191,7 +191,7 @@
         <div class="gh-hud-content" id="gh-hud-main-content">
           <div class="gh-loader-box">
             <div class="gh-spinner"></div>
-            <p>Querying Greenhouse API, board feed, then Wayback if needed…</p>
+            <p>Querying Greenhouse job API…</p>
           </div>
         </div>
       </div>
@@ -365,78 +365,6 @@
     showPanel();
   }
 
-  function extractArchivedParts(htmlRaw, jobId) {
-    const doc = new DOMParser().parseFromString(htmlRaw, "text/html");
-    const titleEl = doc.querySelector("h1.app-title, h1");
-    const title = (titleEl?.textContent || "").replace(/\s+/g, " ").trim() || `Archived job #${jobId}`;
-    const locEl = doc.querySelector(".location, .job__location, [class*='location']");
-    const location = (locEl?.textContent || "").replace(/\s+/g, " ").trim() || "See description";
-    const descEl = doc.querySelector(
-      ".job__description, #content, .content, [class*='job-description'], .job-post, #job_description"
-    );
-    let descriptionHtml = descEl ? descEl.innerHTML : "";
-    if (!descriptionHtml) {
-      const stripped = htmlRaw
-        .replace(/<script[\s\S]*?<\/script>/gi, "")
-        .replace(/<style[\s\S]*?<\/style>/gi, "");
-      descriptionHtml = `<p>${escapeHtml(htmlToPlainText(stripped).slice(0, 4000))}</p>`;
-    }
-    return { title, location, descriptionHtml };
-  }
-
-  function renderArchivedJob(htmlRaw, timestamp, archiveUrl, board, jobId) {
-    const parts = extractArchivedParts(htmlRaw, jobId);
-    const plainText = htmlToPlainText(parts.descriptionHtml);
-    const links = extractEmbeddedLinks(parts.descriptionHtml, plainText);
-    const sourceName = `Wayback (${timestamp})`;
-
-    currentJobPayload = {
-      title: parts.title,
-      location: parts.location,
-      source: sourceName,
-      links,
-      plainText,
-    };
-    lastSource = sourceName;
-    lastTitle = parts.title;
-    lastLinkCount = links.length;
-
-    pillStatus.textContent = parts.title.length > 20 ? parts.title.slice(0, 20) + "…" : parts.title;
-    pillBadge.style.display = "inline-block";
-    pillBadge.textContent = `${links.length} links`;
-
-    mainContent.innerHTML = `
-      <div class="gh-banner warning">
-        <span class="gh-status-badge warning">Wayback archive</span>
-        <span class="gh-banner-text">Live Greenhouse missed this posting. Restored snapshot ${escapeHtml(timestamp)}.</span>
-      </div>
-      <div class="gh-job-header">
-        <h2 class="gh-job-title">${escapeHtml(parts.title)}</h2>
-        <div class="gh-job-meta">
-          <span>${escapeHtml(parts.location)}</span>
-          <span>•</span>
-          <a href="${escapeHtml(archiveUrl)}" target="_blank" rel="noopener noreferrer" class="gh-archive-link">Open snapshot ↗</a>
-        </div>
-      </div>
-      <div class="gh-section">
-        <div class="gh-section-header">
-          <h4>Extracted links (${links.length})</h4>
-          <span class="gh-badge-sub">Open or copy</span>
-        </div>
-        <div class="gh-links-grid">${renderLinkRows(links)}</div>
-      </div>
-      <div class="gh-section">
-        <div class="gh-section-header">
-          <h4>Job description</h4>
-          <button type="button" class="gh-btn-mini" id="gh-copy-desc-btn">Copy text</button>
-        </div>
-        <div class="gh-desc-box">${parts.descriptionHtml}</div>
-      </div>
-    `;
-
-    showPanel();
-  }
-
   function renderLiveBoardList(jobs, board) {
     if (!jobs?.length) return "";
     const rows = jobs
@@ -479,13 +407,12 @@
         <span class="gh-status-badge danger">Expired / unpublished</span>
         <span class="gh-banner-text">${
           jobId
-            ? `Job ${escapeHtml(jobId)} was not on the live API, board feed, or Wayback.`
+            ? `Job ${escapeHtml(jobId)} was not found on the live Greenhouse job API.`
             : "No job id was found on this page or its referrer."
         }</span>
       </div>
       <p style="color:#64748b;font-size:13px;margin:0;">
         Greenhouse often redirects unpublished jobs to the company board.
-        ${board ? `Live openings for <b>${escapeHtml(board)}</b> are listed below when the feed is available.` : ""}
       </p>
       ${
         board
@@ -531,38 +458,6 @@
     return response.json().catch(() => null);
   }
 
-  async function fetchText(url) {
-    const response = await fetch(url).catch(() => null);
-    if (!response || !response.ok) return null;
-    return response.text().catch(() => null);
-  }
-
-  async function fetchWayback(board, jobId) {
-    const targets = [
-      `https://job-boards.greenhouse.io/${board}/jobs/${jobId}`,
-      `https://boards.greenhouse.io/${board}/jobs/${jobId}`,
-    ];
-
-    for (const targetUrl of targets) {
-      const cdxUrl =
-        "https://web.archive.org/cdx/search/cdx?url=" +
-        encodeURIComponent(targetUrl) +
-        "&output=json&limit=5&fl=timestamp,original";
-      const rows = await fetchJson(cdxUrl);
-      if (!Array.isArray(rows) || rows.length < 2) continue;
-
-      const latest = rows[rows.length - 1];
-      const timestamp = latest[0];
-      const original = latest[1] || targetUrl;
-      const archiveUrl = `https://web.archive.org/web/${timestamp}if_/${original}`;
-      const htmlRaw = await fetchText(archiveUrl);
-      if (htmlRaw) {
-        return { htmlRaw, timestamp, archiveUrl };
-      }
-    }
-    return null;
-  }
-
   async function runAutoExtraction() {
     const ctx = detectJobContext();
     lastContext = ctx;
@@ -577,41 +472,22 @@
       return;
     }
 
+    if (!jobId) {
+      renderNotFound(board, jobId);
+      return;
+    }
+
     try {
-      if (jobId) {
-        pillStatus.textContent = "Querying API…";
-        const liveData = await fetchJson(
-          `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(board)}/jobs/${encodeURIComponent(jobId)}`
-        );
-        if (liveData && (liveData.title || liveData.content || liveData.id)) {
-          renderSuccessJob(liveData, "Live job API", board, jobId);
-          return;
-        }
-      }
-
-      pillStatus.textContent = "Checking board feed…";
-      const feedData = await fetchJson(
-        `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(board)}/jobs?content=true`
+      pillStatus.textContent = "Querying API…";
+      const liveData = await fetchJson(
+        `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(board)}/jobs/${encodeURIComponent(jobId)}`
       );
-      const liveJobs = Array.isArray(feedData?.jobs) ? feedData.jobs : [];
-      if (jobId) {
-        const match = liveJobs.find((job) => String(job.id) === String(jobId));
-        if (match) {
-          renderSuccessJob(match, "Board feed", board, jobId);
-          return;
-        }
+      if (liveData && (liveData.title || liveData.content || liveData.id)) {
+        renderSuccessJob(liveData, "Live job API", board, jobId);
+        return;
       }
 
-      if (jobId) {
-        pillStatus.textContent = "Checking Wayback…";
-        const archived = await fetchWayback(board, jobId);
-        if (archived) {
-          renderArchivedJob(archived.htmlRaw, archived.timestamp, archived.archiveUrl, board, jobId);
-          return;
-        }
-      }
-
-      renderNotFound(board, jobId, liveJobs);
+      renderNotFound(board, jobId);
     } catch (err) {
       renderError(err && err.message ? err.message : String(err));
     }

@@ -9,4 +9,4 @@ Partial-width on-page panel. Does **not** use Chrome's Side Panel.
 3. Click **Load unpacked**
 4. Select this `extension/` folder
 
-Then open any Greenhouse job URL. A left floating panel appears with the title, location, extracted links, and HTML description. Collapse or reopen it from the bottom-right pill, the toolbar popup, or **Ctrl+Shift+G**.
+Then open any Greenhouse job URL. A right floating panel appears with the title, location, extracted links, and HTML description. Collapse or reopen it from the bottom-left pill, the toolbar popup, or **Ctrl+Shift+G**.
