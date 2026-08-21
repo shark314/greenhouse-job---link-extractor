@@ -12,8 +12,7 @@
 #gh-pill-trigger {
   position: fixed;
   bottom: 24px;
-  left: 24px;
-  right: auto;
+  right: 24px;
   z-index: 2147483640;
   cursor: pointer;
   user-select: none;
