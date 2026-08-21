@@ -203,16 +203,12 @@
   host.setAttribute("data-gh-overlay", "1");
   host.style.cssText =
     "all:initial;position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;pointer-events:none;";
-  const shadow = host.attachShadow({ mode: "open" });
-  const styleLink = document.createElement("link");
-  styleLink.rel = "stylesheet";
-  styleLink.href = chrome.runtime.getURL("styles.css");
-  shadow.appendChild(styleLink);
-  shadow.appendChild(uiContainer);
+  host.appendChild(uiContainer);
 
   function mountHost() {
-    if (!document.documentElement.contains(host)) {
-      document.documentElement.appendChild(host);
+    const parent = document.body || document.documentElement;
+    if (host.parentNode !== parent) {
+      parent.appendChild(host);
       return true;
     }
     return false;
@@ -223,14 +219,14 @@
     mountHost();
   }).observe(document.documentElement, { childList: true, subtree: true });
 
-  const pill = shadow.getElementById("gh-pill-trigger");
-  const overlay = shadow.getElementById("gh-hud-overlay");
-  const closeBtn = shadow.getElementById("gh-close-hud");
-  const pillStatus = shadow.getElementById("gh-pill-status");
-  const pillBadge = shadow.getElementById("gh-pill-badge");
-  const boardTag = shadow.getElementById("gh-hud-board-tag");
-  const mainContent = shadow.getElementById("gh-hud-main-content");
-  const copyAllBtn = shadow.getElementById("gh-copy-all-btn");
+  const pill = uiContainer.querySelector("#gh-pill-trigger");
+  const overlay = uiContainer.querySelector("#gh-hud-overlay");
+  const closeBtn = uiContainer.querySelector("#gh-close-hud");
+  const pillStatus = uiContainer.querySelector("#gh-pill-status");
+  const pillBadge = uiContainer.querySelector("#gh-pill-badge");
+  const boardTag = uiContainer.querySelector("#gh-hud-board-tag");
+  const mainContent = uiContainer.querySelector("#gh-hud-main-content");
+  const copyAllBtn = uiContainer.querySelector("#gh-copy-all-btn");
 
   function showPanel() {
     overlay.classList.add("is-open");
